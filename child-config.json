@@ -1,0 +1,7 @@
+{
+    "childApps": {
+      "appOne": "ChildAppOne.js",
+      "appTwo": "ChildAppTwo.js"
+    }
+  }
+  
