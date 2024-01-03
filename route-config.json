@@ -1,6 +1,0 @@
-{
-    "routes": {
-      "/app-one": "appOne",
-      "/app-two": "appTwo"
-    }
-  }
