@@ -1,0 +1,14 @@
+{
+  "childApps": {
+    "appOne": {
+      "scope": "ChildAppOne",
+      "module": "./App",
+      "url": "http://localhost:8081/remoteEntry.js"
+    },
+    "appTwo": {
+      "scope": "ChildAppTwo",
+      "module": "./App",
+      "url": "http://localhost:8082/remoteEntry.js"
+    }
+  }
+}
