@@ -1,18 +1,39 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const webpack = require("webpack");
-require("dotenv").config();
+const HtmlWebPackPlugin = require("html-webpack-plugin");
+const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
 
+const deps = require("./package.json").dependencies;
 module.exports = {
-  entry: "./src/index.js",
   output: {
-    path: path.join(__dirname, "/dist"),
-    filename: "bundle.js",
+    publicPath: "http://localhost:3000/",
   },
+
+  resolve: {
+    extensions: [".tsx", ".ts", ".jsx", ".js", ".json"],
+  },
+
+  devServer: {
+    port: 3000,
+    historyApiFallback: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
+  },
+
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.m?js/,
+        type: "javascript/auto",
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+      {
+        test: /\.(css|s[ac]ss)$/i,
+        use: ["style-loader", "css-loader", "postcss-loader"],
+      },
+      {
+        test: /\.(ts|tsx|js|jsx)$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
@@ -20,22 +41,31 @@ module.exports = {
       },
     ],
   },
+
   plugins: [
-    new HtmlWebpackPlugin({
-      template: "./index.html",
+    new ModuleFederationPlugin({
+      name: "poc_container_vanilla",
+      filename: "remoteEntry.js",
+      remotes: {
+        home: "poc_container_vanilla@http://localhost:3000/remoteEntry.js",
+      },
+      exposes: {
+        "./App": "./src/App.js",
+      },
+      shared: {
+        ...deps,
+        react: {
+          singleton: true,
+          requiredVersion: deps.react,
+        },
+        "react-dom": {
+          singleton: true,
+          requiredVersion: deps["react-dom"],
+        },
+      },
     }),
-    new webpack.DefinePlugin({
-      "process.env.CHILD_CONFIG_URL": JSON.stringify(
-        process.env.CHILD_CONFIG_URL
-      ),
-      "process.env.ROUTE_CONFIG_URL": JSON.stringify(
-        process.env.ROUTE_CONFIG_URL
-      ),
+    new HtmlWebPackPlugin({
+      template: "./src/index.html",
     }),
   ],
-  devServer: {
-    static: path.join(__dirname, "dist"),
-    port: 3000,
-    open: true,
-  },
 };

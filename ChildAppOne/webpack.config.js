@@ -28,7 +28,7 @@ module.exports = {
       template: './public/index.html',
     }),
     new ModuleFederationPlugin({
-      name: 'ChildAppOne',
+      name: 'childappone',
       filename: 'remoteEntry.js',
       exposes: {
         './App': './src/App',
@@ -43,6 +43,6 @@ module.exports = {
     static: {
       directory: path.join(__dirname, 'dist'),
     },
-    port: 8081,
+    port: 3001,
   },
 };
